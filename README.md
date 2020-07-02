@@ -9,8 +9,8 @@ After you clone the repo you need:
 - install python virtual env
 
 ```shell
-pip install --upgrade pip
 python3 -m venv flask-env
+pip install --upgrade pip
 source flask-env/bin/activate
 ```
 
