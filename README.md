@@ -20,6 +20,7 @@ source flask-env/bin/activate
 pip3 install flask
 pip3 install Flask-RESTful
 pip3 install toml
+pip3 install Flask-JWT
 # take a look to the installed libraries
 pip3 freeze
 ```
@@ -37,6 +38,7 @@ It is the file for the gunicorn WSGI server configuration
 - log.conf
 Configuration file for the logging of the entire application
 
+--- ***UNDER REVIEW FROM HERE***
 ## Launch the application
 
 The application can be executed in two ways:
