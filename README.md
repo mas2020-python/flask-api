@@ -14,7 +14,7 @@ pip install --upgrade pip
 source flask-env/bin/activate
 ```
 
-- install all the modules
+- (first way) install all the modules
 
 ```shell
 pip3 install flask
@@ -23,6 +23,11 @@ pip3 install toml
 pip3 install Flask-JWT
 # take a look to the installed libraries
 pip3 freeze
+```
+
+- (second way) install all the modules
+```shell
+pip3 install -r requirements.txt
 ```
 
 ## Configuration files
