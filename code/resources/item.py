@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource, reqparse
 import tmpdb
 from flask_jwt import jwt_required
+import sqlite3
 
 
 class Item(Resource):
@@ -15,18 +16,27 @@ class Item(Resource):
 
     @jwt_required()
     def get(self, name):
-        # filter with a lambda function and the get the first element from the iterator
-        # None parameters is in case of no elements found on the iterator
-        item = next(filter(lambda x: x['name'] == name, tmpdb.items), None)
-        return {'item': item}, 200 if item else 404
+        # search item on db
+        item = Item.find_by_name(name)
+        if item:
+            return item
+        return {'message': 'item not found'}, 404
 
-        # OLD STYLE CODE
-        # for i in tmpdb.items:
-        #     if i['name'] == name:
-        #         return i
-        # # return item is not found with the 404 http code
-        # return {'message': 'item not found'}, 404
+    @classmethod
+    # Search an item by name
+    def find_by_name(cls, name):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "SELECT * FROM items WHERE name=?"
+        result = cursor.execute(query, (name,))
+        # get the first row from a result set
+        row = result.fetchone()
+        connection.close()
+        if row:
+            return {'item': {'name': row[0], 'price': row[1]}}
+        return None
 
+    #TODO: implement post saving into db
     def post(self, name):
         # search if an item with the same name doesn't exist ('is not None' can be omitted)
         if next(filter(lambda x: x['name'] == name, tmpdb.items), None) is not None:

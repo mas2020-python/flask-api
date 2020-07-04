@@ -63,7 +63,8 @@ if __name__ == "__main__":
 
     # create the users' table
     try:
-        cursor.execute("CREATE TABLE users (id int, username text, password text)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS users (id int, username text, password text)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS items (name text, price real)")
     except sqlite3.OperationalError:
         pass
 
@@ -73,4 +74,10 @@ if __name__ == "__main__":
     cursor.execute("INSERT INTO users VALUES (?,?,?)", user)
     # commit the changes
     connection.commit()
-    # connection.close()
+    cursor.execute("INSERT INTO items VALUES ('test',10.99)")
+    cursor.execute("INSERT INTO items VALUES ('test2',12.99)")
+    cursor.execute("INSERT INTO items VALUES ('test3',99.99)")
+    # commit the changes
+    connection.commit()
+
+    connection.close()

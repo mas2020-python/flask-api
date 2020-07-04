@@ -30,6 +30,11 @@ pip3 freeze
 pip3 install -r requirements.txt
 ```
 
+- in case of testing with sqlite3 to install DB type:
+```shell
+python3 code/tmpdb.py
+```
+
 ## Configuration files
 
 There are three main configuration files located in config folder:
