@@ -10,8 +10,8 @@ After you clone the repo you need:
 
 ```shell
 python3 -m venv flask-env
-pip install --upgrade pip
 source flask-env/bin/activate
+pip3 install --upgrade pip
 ```
 
 - (first way) install all the modules
