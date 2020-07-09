@@ -12,7 +12,7 @@ class ItemList(Resource):
         # read all rows in the table
         items = []
         for row in result:
-            items.append({'name': row[0], 'price': row[1]})
+            items.append({'id': row[0], 'name': row[1], 'price': row[2]})
         connection.close()
 
         return items, 200
