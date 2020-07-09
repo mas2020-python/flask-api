@@ -18,6 +18,12 @@ def create_app() -> (Flask, Api):
     api = Api(app)
 
     # jtw token (create /auth route: pass a JWT + token as Authorization Header)
+    """ if you need:
+    - to change /auth URL in /login use:
+    app.config['JWT_AUTH_URL_RULE'] = '/login'
+    - to change token expiration time use (example set half an hour):
+    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
+    """
     jwt = JWT(app, authenticate, identity)
 
     return app, api

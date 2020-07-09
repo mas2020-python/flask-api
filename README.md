@@ -2,6 +2,15 @@
 
 This application is a skeleton to start create you own Flask API Server in Python.
 
+## Open points
+
+This a list of open points to deal with:
+
+- import flask-jwt-extended package to manage creation and access to the JWT [token](https://flask-jwt-extended.readthedocs.io/en/stable/)
+- import the logging system as in Falcon project
+- import the toml config file as in Falcon project
+- go in deep into SQLALchemy as a possible ORM to use
+
 ## Installation
 
 After you clone the repo you need:

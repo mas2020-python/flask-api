@@ -16,4 +16,5 @@ def authenticate(username, password):
 
 def identity(payload):
     user_id = payload['identity']
+    # return the object to save in current_identity variable
     return tmpdb.User.find_by_id(user_id)

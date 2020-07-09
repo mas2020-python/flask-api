@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource, reqparse
 import tmpdb
-from flask_jwt import jwt_required
+from flask_jwt import jwt_required, current_identity
 import sqlite3
 
 
@@ -16,6 +16,7 @@ class Item(Resource):
 
     @jwt_required()
     def get(self, name):
+        user = current_identity
         # search item on db
         item = Item.find_by_name(name)
         if item:
