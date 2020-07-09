@@ -2,6 +2,15 @@
 
 This application is a skeleton to start create you own Flask API Server in Python.
 
+## Open points
+
+This a list of open points to deal with:
+
+- import flask-jwt-extended package to manage creation and access to the JWT [token](https://flask-jwt-extended.readthedocs.io/en/stable/)
+- import the logging system as in Falcon project
+- import the toml config file as in Falcon project
+- go in deep into SQLALchemy as a possible ORM to use
+
 ## Installation
 
 After you clone the repo you need:
@@ -9,19 +18,30 @@ After you clone the repo you need:
 - install python virtual env
 
 ```shell
-pip install --upgrade pip
 python3 -m venv flask-env
 source flask-env/bin/activate
+pip3 install --upgrade pip
 ```
 
-- install all the modules
+- (first way) install all the modules
 
 ```shell
 pip3 install flask
 pip3 install Flask-RESTful
 pip3 install toml
+pip3 install Flask-JWT
 # take a look to the installed libraries
 pip3 freeze
+```
+
+- (second way) install all the modules
+```shell
+pip3 install -r requirements.txt
+```
+
+- in case of testing with sqlite3 to install DB type:
+```shell
+python3 code/tmpdb.py
 ```
 
 ## Configuration files
@@ -37,6 +57,7 @@ It is the file for the gunicorn WSGI server configuration
 - log.conf
 Configuration file for the logging of the entire application
 
+--- ***UNDER REVIEW FROM HERE***
 ## Launch the application
 
 The application can be executed in two ways:
