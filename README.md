@@ -30,6 +30,7 @@ pip3 install flask
 pip3 install Flask-RESTful
 pip3 install toml
 pip3 install Flask-JWT
+pip3 install Flask-SQLAlchemy
 # take a look to the installed libraries
 pip3 freeze
 ```
