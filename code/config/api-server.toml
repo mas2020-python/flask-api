@@ -8,4 +8,6 @@ api_env = "APISRV_ENV"
 
 [log]
 # configuration file to use for logging
-conf_file = "config/log.conf"
+conf_file = "config/logging.conf"
+# default logger
+default_logger = "sampleLogger"
