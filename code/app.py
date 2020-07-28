@@ -1,3 +1,4 @@
+import sys
 from datetime import timedelta
 from flask import Flask
 from flask_restful import Api
@@ -6,12 +7,20 @@ from resources.item_list import ItemList
 from flask_jwt import JWT
 from internal.security import authenticate, identity
 from internal.db import db
+from utils.config import API_SRV
+import toml
 
 """
 Using flask_restful jsonify for object that are not dictionary is not needed cause flask restful
 do it for us.
 """
 
+def read_api_config():
+    try:
+        API_SRV.config = toml.load('config/api-server.toml')
+    except Exception as e:
+        print("Houston, we have a problem: ", e.__str__())
+        sys.exit(1)
 
 def create_app() -> (Flask, Api):
     # creating main app
@@ -43,9 +52,11 @@ def add_resources(api: Api):
 
 # start point for the Application
 if __name__ == "__main__":
+    # read config
+    read_api_config()
     app, api = create_app()
     add_resources(api)
     # connect the SQLAlchemy object to the app
     db.init_app(app)
     # run the test server, Debug=True helps to debug in case of any error
-    app.run(port=5000, debug=True)
+    app.run(port=API_SRV.config['server']['port'], debug=True)

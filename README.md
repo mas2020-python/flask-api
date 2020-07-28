@@ -48,6 +48,7 @@ python3 code/tmpdb.py
 ## Configuration files
 
 There are three main configuration files located in config folder:
+--- ***UNDER REVIEW FROM HERE***
 
 - api-server.toml
 It is the main configuration file for the API Application. All the variables are commented out.
@@ -58,7 +59,6 @@ It is the file for the gunicorn WSGI server configuration
 - log.conf
 Configuration file for the logging of the entire application
 
---- ***UNDER REVIEW FROM HERE***
 ## Launch the application
 
 The application can be executed in two ways:
