@@ -10,15 +10,21 @@ class ItemModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     price = db.Column(db.Float(precision=2))
+    # connection with the store table: the db.ForeignKey connects the stores id field with the store_id field. It is
+    # a classic way as a Foreign key create a link between two tables
+    # store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
+    # store = db.relationship('StoreModel')
     # -- end SQLAlchemy info
 
     def __init__(self, name, price):
+        #self.id = ItemModel.id
         self.name = name
         self.price = price
 
+
     # JSON representation of an Item
     def json(self):
-        return {'name': self.name, 'price': self.price}
+        return {'id': self.id, 'name': self.name, 'price': self.price}
 
     @classmethod
     # Search an item by name

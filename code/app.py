@@ -49,8 +49,14 @@ def create_app() -> (Flask, Api):
     app.secret_key = "secret-key"
     # in order to use only the SQLAlchemy modification tracker and not the FlaskSQLAlchemy one
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://ag:test@192.168.1.84/test'
     api = Api(app)
+
+    # using a decorator of Flask to execute the following method before the first request comes to Flask
+    @app.before_first_request
+    def create_table():
+        db.create_all()
 
     # jtw token (create /auth route: pass a JWT + token as Authorization Header)
     """ if you need:
@@ -67,7 +73,7 @@ def create_app() -> (Flask, Api):
 
 def add_resources(api: Api):
     # Add resources and binding with the HTTP URL
-    api.add_resource(Item, '/item/<string:name>')
+    api.add_resource(Item, '/items/<string:name>')
     api.add_resource(ItemList, '/items')
 
 
