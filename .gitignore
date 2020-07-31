@@ -2,6 +2,8 @@ flask-env
 *.log
 .idea
 code/data.db
+# temporary exclusion
+docker
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

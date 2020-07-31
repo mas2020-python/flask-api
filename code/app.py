@@ -19,6 +19,10 @@ Using flask_restful jsonify for object that are not dictionary is not needed cau
 do it for us.
 """
 logger: logging.Logger
+# Flask api global variable
+api: Api
+app: Flask
+
 
 def read_api_config():
     try:
@@ -43,7 +47,8 @@ def set_logger():
         sys.exit(1)
 
 
-def create_app() -> (Flask, Api):
+def create_app():
+    global api, app
     # creating main app
     app = Flask(__name__)
     app.secret_key = "secret-key"
@@ -67,8 +72,6 @@ def create_app() -> (Flask, Api):
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
     jwt = JWT(app, authenticate, identity)
 
-    return app, api
-
 
 def add_resources(api: Api):
     # Add resources and binding with the HTTP URL
@@ -78,12 +81,11 @@ def add_resources(api: Api):
     api.add_resource(StoreList, '/stores')
 
 
-# start point for the Application
-if __name__ == "__main__":
+def main():
     try:
         # read config and load logger
         read_api_config()
-        app, api = create_app()
+        create_app()
         set_logger()
         # log = logging.getLogger('werkzeug')
         # log.disabled = True
@@ -104,3 +106,7 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Houston, we have a problem: {str(e)}")
         sys.exit(1)
+
+
+# start point for the Application
+main()
