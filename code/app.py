@@ -49,8 +49,7 @@ def create_app() -> (Flask, Api):
     app.secret_key = "secret-key"
     # in order to use only the SQLAlchemy modification tracker and not the FlaskSQLAlchemy one
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://ag:test@192.168.1.84/test'
+    app.config['SQLALCHEMY_DATABASE_URI'] = API_SRV.config['server']['db_connection']
     api = Api(app)
 
     # using a decorator of Flask to execute the following method before the first request comes to Flask
