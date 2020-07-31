@@ -20,7 +20,7 @@ class Item(Resource):
         # Get the logger specified in the file
         self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
 
-    @jwt_required()
+    #@jwt_required()
     def get(self, name):
         user = current_identity
         # search item on db
