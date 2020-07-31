@@ -1,7 +1,7 @@
 flask-env
 *.log
 .idea
-data.db
+code/data.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

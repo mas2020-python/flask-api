@@ -1,0 +1,17 @@
+# Main configuration file for the API server in DEBUG
+[server]
+version = "0.1.0"
+address = "localhost"
+port = 8080
+# os env variable name to read API env: values can be 'test' or 'prod'
+api_env = "APISRV_ENV"
+# true/false to get the debug Flask directive (only for test)
+debug = true
+# connection with the db (e.g. sqlite:///data.db, postgresql+psycopg2://ag:test@192.168.1.84/test'
+db_connection="sqlite:///data.db"
+
+[log]
+# configuration file to use for logging
+conf_file = "config/logging.conf"
+# default logger
+default_logger = "sampleLogger"
