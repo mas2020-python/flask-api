@@ -4,6 +4,7 @@ from models.item import ItemModel
 import logging
 from utils.config import API_SRV
 
+
 class Item(Resource):
     # Parse the args in the JSON payload to get all the arguments you specified here.
     parser = reqparse.RequestParser()
@@ -20,7 +21,7 @@ class Item(Resource):
         # Get the logger specified in the file
         self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
 
-    #@jwt_required()
+    # @jwt_required()
     def get(self, name):
         user = current_identity
         # search item on db
@@ -39,7 +40,7 @@ class Item(Resource):
         data = Item.parser.parse_args()
         # name is a param from the request, price is in the JSON body
         # item = ItemModel(name, data['price'], data['store_id'])
-        item = ItemModel(name, **data) # using dict expansion
+        item = ItemModel(name, **data)  # using dict expansion
 
         # save into db
         try:
@@ -64,7 +65,7 @@ class Item(Resource):
         try:
             # update db
             item_model.price = data['price']
-            item_model.store_id = data['store_id'] # we can change the store_is as well
+            item_model.store_id = data['store_id']  # we can change the store_is as well
             item_model.insert()
         except Exception as e:
             return {'message': f"an error occurred during saving an item: {e}"}, 500
@@ -82,12 +83,14 @@ class Item(Resource):
         # return not found
         return {'message': 'item not found'}, 404
 
+
 class ItemList(Resource):
     def __init__(self):
         # Get the logger specified in the file
         self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
 
     def get(self):
+        self.logger.debug("get the items...")
         # using the list comprehension
         return {'items': [item.json() for item in ItemModel.query.all()]}
         # old code
