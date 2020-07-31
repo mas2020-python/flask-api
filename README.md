@@ -104,17 +104,14 @@ Examples for test:
 2020-07-28 12:53:03,230 [WARNING] werkzeug -  * Debugger is active!
 ```
 
---- ***UNDER REVIEW FROM HERE***
-
-
 ### Run in production environment
 
 To run in `PRODUCTION` use:
 
 ```shell
 ╰─$ export APPFALC_ENV=prod
-gunicorn -c config/gunicorn.conf.py app:api
+gunicorn -b localhost:8080 app:app
 ```
 
--c option is to set the right gunicorn configuration file.
-It is always possible to hide the server behind a proxy server like Ngnix or hosted in a Docker container.
+- -c option is to set the right gunicorn configuration file.
+It is always possible to hide the server behind a proxy server like Ngnix or hosted in a Docker container. For more specific information check the official documentation.
