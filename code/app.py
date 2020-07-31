@@ -3,8 +3,8 @@ import sys
 from datetime import timedelta
 from flask import Flask
 from flask_restful import Api
-from resources.item import Item
-from resources.item_list import ItemList
+from resources.item import Item, ItemList
+from resources.store import Store, StoreList
 from flask_jwt import JWT
 from internal.security import authenticate, identity
 from internal.db import db
@@ -74,6 +74,8 @@ def add_resources(api: Api):
     # Add resources and binding with the HTTP URL
     api.add_resource(Item, '/items/<string:name>')
     api.add_resource(ItemList, '/items')
+    api.add_resource(Store, '/stores/<string:name>')
+    api.add_resource(StoreList, '/stores')
 
 
 # start point for the Application

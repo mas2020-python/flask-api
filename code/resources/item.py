@@ -1,18 +1,20 @@
-from flask import request
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required, current_identity
 from models.item import ItemModel
-
+import logging
+from utils.config import API_SRV
 
 class Item(Resource):
-    # Parse the args in the JSON payload to get only price. It is a static variable
-    # for the class
+    # Parse the args in the JSON payload to get all the arguments you specified here.
     parser = reqparse.RequestParser()
     parser.add_argument('price',
                         type=float,
                         required=True,
                         help="This field cannot be empty!")
-
+    parser.add_argument('store_id',
+                        type=int,
+                        required=True,
+                        help="Every item needs a store id")
     @jwt_required()
     def get(self, name):
         user = current_identity
@@ -28,11 +30,11 @@ class Item(Resource):
         if ItemModel.find_by_name(name):
             return {'message': f'an item with the same name \'{name}\' already exists'}, 400
 
-        # get the JSON payload: if the body is not JSON or the content header is not application/JSON we get an error
-        # if you pass force=TRUE you disabled the application/JSON content header to be mandatory
-        data = request.get_json()
+        # parse the arguments in the JSON payload
+        data = Item.parser.parse_args()
         # name is a param from the request, price is in the JSON body
-        item = ItemModel(name, data['price'])
+        # item = ItemModel(name, data['price'], data['store_id'])
+        item = ItemModel(name, **data) # using dict expansion
 
         # save into db
         try:
@@ -56,6 +58,7 @@ class Item(Resource):
         try:
             # update db
             item_model.price = data['price']
+            item_model.store_id = data['store_id'] # we can change the store_is as well
             item_model.insert()
         except Exception as e:
             return {'message': f"an error occurred during saving an item: {e}"}, 500
@@ -72,3 +75,25 @@ class Item(Resource):
             return {'message': 'deleted'}, 202
         # return not found
         return {'message': 'item not found'}, 404
+
+class ItemList(Resource):
+    def __init__(self):
+        # Get the logger specified in the file
+        self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
+
+    def get(self):
+        # using the list comprehension
+        return {'items': [item.json() for item in ItemModel.query.all()]}
+        # old code
+        # connection = sqlite3.connect('data.db')
+        # cursor = connection.cursor()
+        # query = "SELECT * FROM items"
+        # result = cursor.execute(query)
+        # # read all rows in the table
+        # items = []
+        # for row in result:
+        #     items.append({'id': row[0], 'name': row[1], 'price': row[2]})
+        # self.logger.info(f"items get back: {len(items)}")
+        # connection.close()
+        #
+        # return items, 200
