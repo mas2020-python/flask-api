@@ -74,7 +74,7 @@ def add_resources(api: Api):
     # Add resources and binding with the HTTP URL
     api.add_resource(Item, '/items/<string:name>')
     api.add_resource(ItemList, '/items')
-    api.add_resource(Store, '/stores/<string:name>')
+    api.add_resource(Store, '/stores/<int:_id>')
     api.add_resource(StoreList, '/stores')
 
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         api_env = os.environ[API_SRV.config['server']['api_env']]
         if api_env == 'test':
             logger.info(f"Application is starting in TEST environment (version: {API_SRV.config['server']['version']})")
-            app.run(port=API_SRV.config['server']['port'], debug=True)
+            app.run(port=API_SRV.config['server']['port'], debug=True if API_SRV.config['server']['debug'] else False)
         else:
             logger.info(f"Application is starting in PRODUCTION env (version: {API_SRV.config['server']['version']})")
     except KeyError as e:

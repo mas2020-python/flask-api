@@ -25,7 +25,7 @@ class ItemModel(db.Model):
 
     # JSON representation of an Item
     def json(self):
-        return {'id': self.id, 'name': self.name, 'price': self.price}
+        return {'id': self.id, 'name': self.name, 'price': self.price, 'store': self.store_id}
 
     @classmethod
     # Search an item by name

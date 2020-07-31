@@ -15,6 +15,11 @@ class Item(Resource):
                         type=int,
                         required=True,
                         help="Every item needs a store id")
+
+    def __init__(self):
+        # Get the logger specified in the file
+        self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
+
     @jwt_required()
     def get(self, name):
         user = current_identity
@@ -40,7 +45,8 @@ class Item(Resource):
         try:
             item.insert()
         except Exception as e:
-            return {'message': f"an error occurred during saving an item: {e}"}, 500
+            self.logger.error(str(e))
+            return {'message': f"An error occurred during saving an item, read log for major details"}, 500
 
         # return item with the 201 http code
         return item.json(), 201

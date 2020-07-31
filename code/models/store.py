@@ -14,18 +14,24 @@ class StoreModel(db.Model):
     items = db.relationship('ItemModel', lazy='dynamic')
     # -- end SQLAlchemy info
 
-    def __init__(self, name, price):
+    def __init__(self, name):
         self.name = name
 
     # JSON representation of an Item
     def json(self):
-        return {'name': self.name, 'items': [item.json() for item in self.items.all()]}
+        return {'id': self.id, 'name': self.name, 'items': [item.json() for item in self.items.all()]}
 
     @classmethod
     # Search an item by name
     def find_by_name(cls, name):
         # return the first row matching with the filter using FlaskSQLAlchemy
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    # Search an item by name
+    def find_by_id(cls, id):
+        # return the first row matching with the filter using FlaskSQLAlchemy
+        return cls.query.filter_by(id=id).first()
 
     """
     Save and update at the same time
