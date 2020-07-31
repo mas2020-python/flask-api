@@ -100,6 +100,13 @@ def main():
             app.run(port=API_SRV.config['server']['port'], debug=True if API_SRV.config['server']['debug'] else False)
         else:
             logger.info(f"Application is starting in PRODUCTION env (version: {API_SRV.config['server']['version']})")
+            # gunicorn_logger = logging.getLogger('gunicorn.error')
+            # gunicorn_logger.setLevel(logger.level)
+            # print(gunicorn_logger)
+            # gunicorn_logger.handlers.clear()
+            # gunicorn_logger.addHandler(logger.handlers[0])
+            # print(gunicorn_logger.handlers)
+            #logging.getLogger('gunicorn.error').handlers = logging.getLogger(API_SRV.config['log']['default_logger']).handlers
     except KeyError as e:
         logger.error(f"Houston, we have a problem finding the env variable: {str(e)}")
         sys.exit(1)

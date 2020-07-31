@@ -115,3 +115,10 @@ gunicorn -b localhost:8080 app:app
 
 - -c option is to set the right gunicorn configuration file.
 It is always possible to hide the server behind a proxy server like Ngnix or hosted in a Docker container. For more specific information check the official documentation.
+To read the config file type:
+
+```shell
+gunicorn -c config/gunicorn.conf.py
+```
+
+Major info on gunicorn installation and run can be found [here](https://medium.com/@thucnc/deploy-a-python-flask-restful-api-app-with-gunicorn-supervisor-and-nginx-62b20d62691f).
