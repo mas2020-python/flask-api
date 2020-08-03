@@ -97,7 +97,7 @@ def main():
         api_env = os.environ[API_SRV.config['server']['api_env']]
         if api_env == 'test':
             logger.info(f"Application is starting in TEST environment (version: {API_SRV.config['server']['version']})")
-            app.run(port=API_SRV.config['server']['port'], debug=True if API_SRV.config['server']['debug'] else False)
+            app.run(host=API_SRV.config['server']['address'], port=API_SRV.config['server']['port'], debug=True if API_SRV.config['server']['debug'] else False)
         else:
             logger.info(f"Application is starting in PRODUCTION env (version: {API_SRV.config['server']['version']})")
             # gunicorn_logger = logging.getLogger('gunicorn.error')
