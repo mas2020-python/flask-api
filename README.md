@@ -29,7 +29,7 @@ pip3 install Flask-RESTful
 pip3 install toml
 pip3 install Flask-JWT
 pip3 install Flask-SQLAlchemy
-pip3 install gunicorn
+pip3 install uswgi
 # take a look to the installed libraries
 pip3 freeze
 ```
@@ -76,6 +76,8 @@ There are three main configuration files located in config folder:
 The application can be executed in two ways:
 
 - in test mode with Flask integrated server and debug
+
+***UNDER REVISION FOR UWSGI: change with uwsgi***
 - in production mode with [gunicorn](https://docs.gunicorn.org/en/stable/run.html)
 
 To switch between these two envs set accordingly the ENV variable APISRV_ENV with:
