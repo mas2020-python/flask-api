@@ -76,9 +76,7 @@ There are three main configuration files located in config folder:
 The application can be executed in two ways:
 
 - in test mode with Flask integrated server and debug
-
-***UNDER REVISION FOR UWSGI: change with uwsgi***
-- in production mode with [gunicorn](https://docs.gunicorn.org/en/stable/run.html)
+- in production mode with [uwsgi](https://uwsgi-docs.readthedocs.io/en/latest/index.html)
 
 To switch between these two envs set accordingly the ENV variable APISRV_ENV with:
 
@@ -106,21 +104,22 @@ Examples for test:
 2020-07-28 12:53:03,230 [WARNING] werkzeug -  * Debugger is active!
 ```
 
-### Run in production environment
+### Run in production (local) environment
 
-To run in `PRODUCTION` use:
-
-```shell
-╰─$ export APPFALC_ENV=prod
-gunicorn -b localhost:8080 app:app
-```
-
-- -c option is to set the right gunicorn configuration file.
-It is always possible to hide the server behind a proxy server like Ngnix or hosted in a Docker container. For more specific information check the official documentation.
-To read the config file type:
+To run in a local `PRODUCTION` environment (always for test purpose) use:
 
 ```shell
-gunicorn -c config/gunicorn.conf.py
+uwsgi --http-socket :8080 --module app:app --uid andrea --gid andrea --master --process 2 --threads 2 --env=APISRV_ENV=prod
+
 ```
 
-Major info on gunicorn installation and run can be found [here](https://medium.com/@thucnc/deploy-a-python-flask-restful-api-app-with-gunicorn-supervisor-and-nginx-62b20d62691f).
+if you use the uwsgi.ini file you can use:
+
+```shell
+uwsgi --http-socket :8080 --module app:app --uid andrea --gid andrea --master --ini code/config/uwsgi.ini --env=APISRV_ENV=prod
+```
+
+### Run in production environment (TODO)
+
+To run in production it might be a good solution to run uwsgi server behind a HTTP proxy server as Nginx.
+This paragraph will be updated with major informartion as soon as they become available.
