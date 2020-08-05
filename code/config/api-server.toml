@@ -1,7 +1,7 @@
 # Main configuration file for the API server in DEBUG
 [server]
 version = "0.1.0"
-address = "localhost"
+address = "192.168.1.84"
 port = 8080
 # os env variable name to read API env: values can be 'test' or 'prod'
 api_env = "APISRV_ENV"
