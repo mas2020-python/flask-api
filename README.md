@@ -109,14 +109,14 @@ Examples for test:
 To run in a local `PRODUCTION` environment (always for test purpose) use:
 
 ```shell
-uwsgi --http-socket :8080 --module app:app --uid andrea --gid andrea --master --process 2 --threads 2 --env=APISRV_ENV=prod
+<path-to-uwsgi-bin>/uwsgi --http-socket :8080 --module app:app --uid <user> --gid <user> --master --process 2 --threads 2 --env=APISRV_ENV=prod
 
 ```
 
 if you use the uwsgi.ini file you can use:
 
 ```shell
-uwsgi --http-socket :8080 --module app:app --uid andrea --gid andrea --master --ini code/config/uwsgi.ini --env=APISRV_ENV=prod
+<path-to-uwsgi-bin>/uwsgi --http-socket :8080 --module app:app --uid <user> --gid <user> --master --ini <path-to-ini-file> --env=APISRV_ENV=prod
 ```
 
 ### Run in production environment (TODO)
