@@ -113,6 +113,12 @@ To run in a local `PRODUCTION` environment (always for test purpose) use:
 
 ```
 
+for instance:
+
+```shell
+flask-env/bin/uwsgi --http-socket :8080 --module app:app --uid andrea --gid andrea --master --ini code/config/uwsgi.ini --env=APISRV_ENV=prod
+```
+
 if you use the uwsgi.ini file you can use:
 
 ```shell

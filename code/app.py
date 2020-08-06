@@ -56,6 +56,7 @@ def create_app():
     # in order to use only the SQLAlchemy modification tracker and not the FlaskSQLAlchemy one
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = API_SRV.config['server']['db_connection']
+    app.config['PROPAGATE_EXCEPTIONS'] = True
     api = Api(app)
 
     # using a decorator of Flask to execute the following method before the first request comes to Flask
