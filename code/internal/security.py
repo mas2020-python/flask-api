@@ -2,6 +2,9 @@
 This file is for managing security in combination with the JWT technique.
 We have to mandatory methods:
 - authenticate: use for authentication of the users
+In this method, if we return the user Flask JWT creates the token with user.id as content (automation)
+
+
 - identity: use to get the payload
 """
 from models.user import UserModel
