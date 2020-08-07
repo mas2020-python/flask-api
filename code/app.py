@@ -5,6 +5,7 @@ from flask import Flask
 from flask_restful import Api
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
+from resources.user import User, UserList
 from flask_jwt import JWT
 from internal.security import authenticate, identity
 from internal.db import db
@@ -81,6 +82,8 @@ def add_resources(api: Api):
     api.add_resource(ItemList, '/items')
     api.add_resource(Store, '/stores/<int:_id>')
     api.add_resource(StoreList, '/stores')
+    api.add_resource(User, '/users/<int:user_id>')
+    api.add_resource(UserList, '/users')
 
 
 def main():
@@ -99,7 +102,8 @@ def main():
         api_env = os.environ[API_SRV.config['server']['api_env']]
         if api_env == 'test':
             logger.info(f"Application is starting in TEST environment (version: {API_SRV.config['server']['version']})")
-            app.run(host=API_SRV.config['server']['address'], port=API_SRV.config['server']['port'], debug=True if API_SRV.config['server']['debug'] else False)
+            app.run(host=API_SRV.config['server']['address'], port=API_SRV.config['server']['port'],
+                    debug=True if API_SRV.config['server']['debug'] else False)
         else:
             logger.info(f"Application is starting in PRODUCTION env (version: {API_SRV.config['server']['version']})")
             # gunicorn_logger = logging.getLogger('gunicorn.error')
@@ -108,7 +112,7 @@ def main():
             # gunicorn_logger.handlers.clear()
             # gunicorn_logger.addHandler(logger.handlers[0])
             # print(gunicorn_logger.handlers)
-            #logging.getLogger('gunicorn.error').handlers = logging.getLogger(API_SRV.config['log']['default_logger']).handlers
+            # logging.getLogger('gunicorn.error').handlers = logging.getLogger(API_SRV.config['log']['default_logger']).handlers
     except KeyError as e:
         logger.error(f"Houston, we have a problem finding the env variable: {str(e)}")
         sys.exit(1)

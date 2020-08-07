@@ -22,9 +22,9 @@ if __name__ == "__main__":
     cursor.execute("INSERT INTO users VALUES (?,?,?)", user)
     # commit the changes
     connection.commit()
-    cursor.execute("INSERT INTO items VALUES (1,'test',10.99)")
-    cursor.execute("INSERT INTO items VALUES (2,'test2',12.99)")
-    cursor.execute("INSERT INTO items VALUES (3,'test3',99.99)")
+    cursor.execute("INSERT INTO items VALUES (1,'test',10.99,1)")
+    cursor.execute("INSERT INTO items VALUES (2,'test2',12.99,1)")
+    cursor.execute("INSERT INTO items VALUES (3,'test3',99.99,1)")
     # commit the changes
     connection.commit()
 
