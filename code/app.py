@@ -5,9 +5,8 @@ from flask import Flask
 from flask_restful import Api
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
-from resources.user import User, UserList
-from flask_jwt import JWT
-from internal.security import authenticate, identity
+from resources.user import User, UserList, UserLogin
+from flask_jwt_extended import JWTManager
 from internal.db import db
 from utils.config import API_SRV
 import toml
@@ -53,7 +52,7 @@ def create_app():
     global api, app
     # creating main app
     app = Flask(__name__)
-    app.secret_key = "secret-key"
+    app.secret_key = "secret-key" # or config as app.config['JWT_SECRET_KEY']
     # in order to use only the SQLAlchemy modification tracker and not the FlaskSQLAlchemy one
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = API_SRV.config['server']['db_connection']
@@ -73,7 +72,7 @@ def create_app():
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
     """
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
-    jwt = JWT(app, authenticate, identity)
+    jwt = JWTManager(app)
 
 
 def add_resources(api: Api):
@@ -84,6 +83,7 @@ def add_resources(api: Api):
     api.add_resource(StoreList, '/stores')
     api.add_resource(User, '/users/<int:user_id>')
     api.add_resource(UserList, '/users')
+    api.add_resource(UserLogin, '/login')
 
 
 def main():

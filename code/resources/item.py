@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_jwt import jwt_required, current_identity
+from flask_jwt_extended import jwt_required
 from models.item import ItemModel
 import logging
 from utils.config import API_SRV
@@ -21,9 +21,8 @@ class Item(Resource):
         # Get the logger specified in the file
         self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
 
-    # @jwt_required()
+    @jwt_required
     def get(self, name):
-        user = current_identity
         # search item on db
         item = ItemModel.find_by_name(name)
         if item:
