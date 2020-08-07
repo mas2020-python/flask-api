@@ -64,14 +64,9 @@ def create_app():
     def create_table():
         db.create_all()
 
-    # jtw token (create /auth route: pass a JWT + token as Authorization Header)
-    """ if you need:
-    - to change /auth URL in /login use:
-    app.config['JWT_AUTH_URL_RULE'] = '/login'
-    - to change token expiration time use (example set half an hour):
-    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
-    """
-    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
+    # jtw extended token settings
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = API_SRV.config['security']['token_expiration']
+    logger.debug(f"set token expiration to {API_SRV.config['security']['token_expiration']} seconds")
     jwt = JWTManager(app)
 
     @jwt.user_claims_loader
@@ -112,11 +107,8 @@ def main():
     try:
         # read config and load logger
         read_api_config()
-        create_app()
         set_logger()
-        # log = logging.getLogger('werkzeug')
-        # log.disabled = True
-        # print(logger.handlers)
+        create_app()
         add_resources(api)
         # connect the SQLAlchemy object to the app
         db.init_app(app)
