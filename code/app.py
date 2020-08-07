@@ -1,7 +1,7 @@
 import os
 import sys
 from datetime import timedelta
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
@@ -89,6 +89,12 @@ def create_app():
         is_admin = True if identity == 1 else False
         return {'is_admin': is_admin}
 
+    @jwt.expired_token_loader
+    def expired_token_callback():
+        return jsonify({
+            'description': 'The token has expired',
+            'error': 'token_expired'
+        }), 401
 
 def add_resources(api: Api):
     # Add resources and binding with the HTTP URL

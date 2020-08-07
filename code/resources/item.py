@@ -83,6 +83,7 @@ class Item(Resource):
         """
         This method delete the item from database. This is an example of using claim also to
         determine if the user has the right privilege for this operation.
+        This is also need to receive a fresh token to let user executes the operation.
         :param name: item name to delete
         :return: json response
         """
