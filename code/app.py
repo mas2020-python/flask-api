@@ -1,13 +1,12 @@
 import os
 import sys
 from datetime import timedelta
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
-from resources.user import User, UserList
-from flask_jwt import JWT
-from internal.security import authenticate, identity
+from resources.user import User, UserList, UserLogin, TokenRefresh
+from flask_jwt_extended import JWTManager
 from internal.db import db
 from utils.config import API_SRV
 import toml
@@ -53,7 +52,7 @@ def create_app():
     global api, app
     # creating main app
     app = Flask(__name__)
-    app.secret_key = "secret-key"
+    app.secret_key = "secret-key"  # or config as app.config['JWT_SECRET_KEY']
     # in order to use only the SQLAlchemy modification tracker and not the FlaskSQLAlchemy one
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = API_SRV.config['server']['db_connection']
@@ -65,16 +64,32 @@ def create_app():
     def create_table():
         db.create_all()
 
-    # jtw token (create /auth route: pass a JWT + token as Authorization Header)
-    """ if you need:
-    - to change /auth URL in /login use:
-    app.config['JWT_AUTH_URL_RULE'] = '/login'
-    - to change token expiration time use (example set half an hour):
-    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
-    """
-    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
-    jwt = JWT(app, authenticate, identity)
+    # jtw extended token settings
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = API_SRV.config['security']['token_expiration']
+    logger.debug(f"set token expiration to {API_SRV.config['security']['token_expiration']} seconds")
+    jwt = JWTManager(app)
 
+    @jwt.user_claims_loader
+    def add_claims_to_jwt(identity):
+        """
+        This method is used to add some claims to the payload of the JWT token as well. The claims are added
+        in the form of a dictionary (json object) as:
+        "user_claims": {
+            "is_admin": true
+        }
+        :param identity: identity set in UserLogin post method
+        :return:
+        """
+        # suppose for test that if a user has id == 1 is admin. We set identity to the user_id
+        is_admin = True if identity == 1 else False
+        return {'is_admin': is_admin}
+
+    @jwt.expired_token_loader
+    def expired_token_callback():
+        return jsonify({
+            'description': 'The token has expired',
+            'error': 'token_expired'
+        }), 401
 
 def add_resources(api: Api):
     # Add resources and binding with the HTTP URL
@@ -84,17 +99,16 @@ def add_resources(api: Api):
     api.add_resource(StoreList, '/stores')
     api.add_resource(User, '/users/<int:user_id>')
     api.add_resource(UserList, '/users')
+    api.add_resource(UserLogin, '/login')
+    api.add_resource(TokenRefresh, '/refresh')
 
 
 def main():
     try:
         # read config and load logger
         read_api_config()
-        create_app()
         set_logger()
-        # log = logging.getLogger('werkzeug')
-        # log.disabled = True
-        # print(logger.handlers)
+        create_app()
         add_resources(api)
         # connect the SQLAlchemy object to the app
         db.init_app(app)

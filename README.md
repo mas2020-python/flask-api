@@ -27,7 +27,7 @@ pip3 install --upgrade pip
 pip3 install flask
 pip3 install Flask-RESTful
 pip3 install toml
-pip3 install Flask-JWT
+pip3 install Flask-JWT-Extended
 pip3 install Flask-SQLAlchemy
 pip3 install uswgi
 # take a look to the installed libraries

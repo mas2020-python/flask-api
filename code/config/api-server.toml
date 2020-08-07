@@ -15,3 +15,7 @@ db_connection="sqlite:///data.db"
 conf_file = "config/logging.conf"
 # default logger
 default_logger = "sampleLogger"
+
+[security]
+# how long a token should live before it expires (in seconds)
+token_expiration = 600

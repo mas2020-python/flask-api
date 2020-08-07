@@ -1,5 +1,11 @@
 from flask_restful import Resource, reqparse
-from flask_jwt import jwt_required, current_identity
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt_claims,
+    jwt_optional,
+    get_jwt_identity,
+    fresh_jwt_required
+)
 from models.item import ItemModel
 import logging
 from utils.config import API_SRV
@@ -21,9 +27,8 @@ class Item(Resource):
         # Get the logger specified in the file
         self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
 
-    # @jwt_required()
+    @jwt_required
     def get(self, name):
-        user = current_identity
         # search item on db
         item = ItemModel.find_by_name(name)
         if item:
@@ -73,8 +78,20 @@ class Item(Resource):
         # return item with the 201 http code
         return "", 204
 
-    # Delete a single element
+    @fresh_jwt_required
     def delete(self, name):
+        """
+        This method delete the item from database. This is an example of using claim also to
+        determine if the user has the right privilege for this operation.
+        This is also need to receive a fresh token to let user executes the operation.
+        :param name: item name to delete
+        :return: json response
+        """
+        # get the claims from the token
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privileges are required for this operation'}, 401
+
         # search for the name item (using the pattern of the error first approach)
         item: ItemModel = ItemModel.find_by_name(name)
         if item:
@@ -89,11 +106,18 @@ class ItemList(Resource):
         # Get the logger specified in the file
         self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
 
+    @jwt_optional
     def get(self):
-        self.logger.debug("get the items...")
-        #print(alfa)
-        # using the list comprehension
-        return {'items': [item.json() for item in ItemModel.find_all()]}
+        # get the identity, if it exists it means the user is authenticated. If the jwt is not present
+        # the method will return None
+        user_id = get_jwt_identity()
+        items = [item.json() for item in ItemModel.find_all()]
+        if user_id:
+            return {'items': items}, 200
+        return {
+            'items': [item['name'] for item in items],
+            'message': 'More data available if you log in'
+        }
 
         # old code
         # connection = sqlite3.connect('data.db')
