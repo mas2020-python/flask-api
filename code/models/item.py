@@ -4,6 +4,8 @@ from internal.db import db
 """
 Item model is the representation of the DB object item
 """
+
+
 class ItemModel(db.Model):
     # -- start SQLAlchemy info
     __tablename__ = 'items'
@@ -14,18 +16,23 @@ class ItemModel(db.Model):
     # a classic way as a Foreign key create a link between two tables
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
     store = db.relationship('StoreModel')
+
     # -- end SQLAlchemy info
 
     def __init__(self, name, price, store_id):
-        #self.id = ItemModel.id
+        # self.id = ItemModel.id
         self.name = name
         self.price = price
         self.store_id = store_id
 
-
     # JSON representation of an Item
     def json(self):
-        return {'id': self.id, 'name': self.name, 'price': self.price, 'store': self.store_id}
+        return {
+            'id': self.id,
+            'name': self.name,
+            'price': self.price,
+            'store': self.store_id
+        }
 
     @classmethod
     # Search an item by name
@@ -33,9 +40,14 @@ class ItemModel(db.Model):
         # return the first row matching with the filter using FlaskSQLAlchemy
         return cls.query.filter_by(name=name).first()
 
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
+
     """
     Save and update at the same time
     """
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
@@ -51,6 +63,7 @@ class ItemModel(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+
 
 """ with SQLAlchemy no longer needed
     def update(self):

@@ -93,7 +93,7 @@ class ItemList(Resource):
         self.logger.debug("get the items...")
         #print(alfa)
         # using the list comprehension
-        return {'items': [item.json() for item in ItemModel.query.all()]}
+        return {'items': [item.json() for item in ItemModel.find_all()]}
 
         # old code
         # connection = sqlite3.connect('data.db')

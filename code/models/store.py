@@ -3,6 +3,8 @@ from internal.db import db
 """
 Item model is the representation of the DB object item
 """
+
+
 class StoreModel(db.Model):
     # -- start SQLAlchemy info
     __tablename__ = 'stores'
@@ -12,6 +14,7 @@ class StoreModel(db.Model):
     # store every time a new store model is created. This operation is demand to the query on items (adding .all to
     # self.items in json method)
     items = db.relationship('ItemModel', lazy='dynamic')
+
     # -- end SQLAlchemy info
 
     def __init__(self, name):
@@ -19,7 +22,11 @@ class StoreModel(db.Model):
 
     # JSON representation of an Item
     def json(self):
-        return {'id': self.id, 'name': self.name, 'items': [item.json() for item in self.items.all()]}
+        return {
+            'id': self.id,
+            'name': self.name,
+            'items': [item.json() for item in self.items.all()]
+        }
 
     @classmethod
     # Search an item by name
@@ -36,6 +43,7 @@ class StoreModel(db.Model):
     """
     Save and update at the same time
     """
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
