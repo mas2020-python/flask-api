@@ -5,7 +5,7 @@ from flask import Flask
 from flask_restful import Api
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
-from resources.user import User, UserList, UserLogin
+from resources.user import User, UserList, UserLogin, TokenRefresh
 from flask_jwt_extended import JWTManager
 from internal.db import db
 from utils.config import API_SRV
@@ -52,7 +52,7 @@ def create_app():
     global api, app
     # creating main app
     app = Flask(__name__)
-    app.secret_key = "secret-key" # or config as app.config['JWT_SECRET_KEY']
+    app.secret_key = "secret-key"  # or config as app.config['JWT_SECRET_KEY']
     # in order to use only the SQLAlchemy modification tracker and not the FlaskSQLAlchemy one
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = API_SRV.config['server']['db_connection']
@@ -74,6 +74,21 @@ def create_app():
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
     jwt = JWTManager(app)
 
+    @jwt.user_claims_loader
+    def add_claims_to_jwt(identity):
+        """
+        This method is used to add some claims to the payload of the JWT token as well. The claims are added
+        in the form of a dictionary (json object) as:
+        "user_claims": {
+            "is_admin": true
+        }
+        :param identity: identity set in UserLogin post method
+        :return:
+        """
+        # suppose for test that if a user has id == 1 is admin. We set identity to the user_id
+        is_admin = True if identity == 1 else False
+        return {'is_admin': is_admin}
+
 
 def add_resources(api: Api):
     # Add resources and binding with the HTTP URL
@@ -84,6 +99,7 @@ def add_resources(api: Api):
     api.add_resource(User, '/users/<int:user_id>')
     api.add_resource(UserList, '/users')
     api.add_resource(UserLogin, '/login')
+    api.add_resource(TokenRefresh, '/refresh')
 
 
 def main():
