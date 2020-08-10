@@ -124,6 +124,10 @@ if you use the uwsgi.ini file you can use:
 ```shell
 <path-to-uwsgi-bin>/uwsgi --http-socket :8080 --module app:app --uid <user> --gid <user> --master --ini <path-to-ini-file> --env=APISRV_ENV=prod
 ```
+to run with **emperor**:
+```shell
+
+```
 
 ### Run in production environment (TODO)
 
