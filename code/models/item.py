@@ -1,4 +1,3 @@
-import sqlite3
 from internal.db import db
 
 """
@@ -15,8 +14,6 @@ class ItemModel(db.Model):
     # connection with the store table: the db.ForeignKey connects the stores id field with the store_id field. It is
     # a classic way as a Foreign key create a link between two tables
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
-    store = db.relationship('StoreModel')
-
     # -- end SQLAlchemy info
 
     def __init__(self, name, price, store_id):
@@ -31,7 +28,8 @@ class ItemModel(db.Model):
             'id': self.id,
             'name': self.name,
             'price': self.price,
-            'store': self.store_id
+            'store_id': self.store_id,
+            #'store_name': self.store.name
         }
 
     @classmethod
@@ -39,6 +37,16 @@ class ItemModel(db.Model):
     def find_by_name(cls, name):
         # return the first row matching with the filter using FlaskSQLAlchemy
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def find_by_name_like(cls, value):
+        """
+        Search an item with a like clause on the name column
+        :param value: value for the like expression without '%'
+        :return:
+        """
+        # return the first row matching with the filter using FlaskSQLAlchemy
+        return cls.query.filter(cls.name.like(value + '%')).all()
 
     @classmethod
     def find_all(cls):

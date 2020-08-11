@@ -1,6 +1,11 @@
 # Python Flask API Template
 
 This application is a skeleton to start create you own Flask API Server in Python.
+Documentation can be found here:
+
+- for Flask-SQLAlchemy take a look [here](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
+- for Flask-JWT-Extended take a look [here](https://flask-jwt-extended.readthedocs.io/en/stable/)
+- for Flask-RESTful take a look [here](https://flask-restful.readthedocs.io/en/latest/)
 
 ## Open points
 
@@ -113,20 +118,51 @@ To run in a local `PRODUCTION` environment (always for test purpose) use:
 
 ```
 
-for instance:
+for example:
 
 ```shell
 flask-env/bin/uwsgi --http-socket :8080 --module app:app --uid andrea --gid andrea --master --ini code/config/uwsgi.ini --env=APISRV_ENV=prod
 ```
 
-if you use the uwsgi.ini file you can use:
+or, if you use the uwsgi.ini file you can use:
 
 ```shell
-<path-to-uwsgi-bin>/uwsgi --http-socket :8080 --module app:app --uid <user> --gid <user> --master --ini <path-to-ini-file> --env=APISRV_ENV=prod
+flask-env/bin/uwsgi \
+--uid andrea --gid andrea \
+--master --ini code/config/uwsgi.ini \
+--env=APISRV_ENV=prod
 ```
-to run with **emperor**:
-```shell
 
+to run with **emperor**:
+
+```shell
+flask-env/bin/uwsgi \
+--uid andrea --gid andrea \
+--master --die-on-term --emperor code/config/uwsgi.ini \
+--env=APISRV_ENV=prod --logto code/log/emperor.log
+```
+
+create under code/config/uwsgi.ini the config file:
+
+```ini
+[uwsgi]
+base = /Users/andrea.genovesi/development/python/projects/flask-api
+app = app
+module = %(app)
+callable = app
+
+# change dir to the python main folder that contains app.py
+chdir=%(base)/code
+
+#socket = %(base)/socket.sock
+http-socket = :8080
+
+# processes configuration
+processes = 3
+threads = 3
+harakiri = 15
+
+logto = %(base)/code/log/%n.log
 ```
 
 ### Run in production environment (TODO)
