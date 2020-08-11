@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_claims,
@@ -108,10 +108,21 @@ class ItemList(Resource):
 
     @jwt_optional
     def get(self):
+        """
+        Get items from DB. It is possible to pass a query string with this syntax: ?name=value
+        The application will apply a like query filter to the name, as if you wrote 'name like value%' in SQL language
+        :return:
+        """
+        self.logger.debug(f"/items args: {request.args}")
         # get the identity, if it exists it means the user is authenticated. If the jwt is not present
-        # the method will return None
+        # the method a subset of information
         user_id = get_jwt_identity()
-        items = [item.json() for item in ItemModel.find_all()]
+        # filter by the query string
+        if not request.args['name']:
+            items = [item.json() for item in ItemModel.find_all()]
+        else:
+            items = [item.json() for item in ItemModel.find_by_name_like(request.args['name'])]
+        # create the answer based on the token or not
         if user_id:
             return {'items': items}, 200
         return {

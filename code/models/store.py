@@ -10,11 +10,26 @@ class StoreModel(db.Model):
     __tablename__ = 'stores'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    # relationship with item model (see the other class). Lazy dynamic means not to load all the items related to the
-    # store every time a new store model is created. This operation is demand to the query on items (adding .all to
-    # self.items in json method)
+    """relationship with item model (see the other class). lazy defines when SQLAlchemy will load the data from the 
+    database: 
+    * 'select': (default: true) means that SQLAlchemy will load the data as necessary in one go using a 
+    standard select statement. 
+    * 'joined': tells SQLAlchemy to load the relationship in the same query as the parent 
+    using a JOIN statement. 
+    * 'subquery': works like 'joined' but instead SQLAlchemy will use a subquery. 
+    * 'dynamic': is special and can be useful if you have many items and always want to apply additional SQL filters to 
+    them. Instead of loading the items SQLAlchemy will return another query object which you can further refine before 
+    loading the items. Note that this cannot be turned into a different loading strategy when querying so it’s often 
+    a good idea to avoid using this in favor of lazy=True. A query object equivalent to a dynamic user.addresses 
+    relationship can be created using Address.query.with_parent(user) while still being able to use lazy or eager 
+    loading on the relationship itself as necessary. 
+    
+    It is also possible to add a back ref on the child object, in this case ItemModel, to see the store object
+    associated with the child using:
+    items = db.relationship('ItemModel', lazy='dynamic', backref=db.backref('store', lazy='joined'))
+    at this point in the ItemModel is possible to reference the self.store property (without ever having created it)
+    """
     items = db.relationship('ItemModel', lazy='dynamic')
-
     # -- end SQLAlchemy info
 
     def __init__(self, name):
