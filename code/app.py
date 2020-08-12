@@ -1,6 +1,5 @@
 import os
 import sys
-from datetime import timedelta
 from flask import Flask, jsonify
 from flask_restful import Api
 from resources.test import Test
@@ -13,8 +12,6 @@ from utils.config import API_SRV
 import toml
 import logging
 import logging.config
-
-from flask.logging import default_handler
 
 """
 Using flask_restful jsonify for object that are not dictionary is not needed cause flask restful
@@ -91,7 +88,8 @@ def create_app():
             'error': 'token_expired'
         }), 401
 
-def add_resources(api: Api):
+
+def add_resources():
     # Add resources and binding with the HTTP URL
     api.add_resource(Test, '/test')
     api.add_resource(Item, '/items/<string:name>')
@@ -110,7 +108,7 @@ def main():
         read_api_config()
         set_logger()
         create_app()
-        add_resources(api)
+        add_resources()
         # connect the SQLAlchemy object to the app
         db.init_app(app)
         # run the test server, Debug=True helps to debug in case of any error
