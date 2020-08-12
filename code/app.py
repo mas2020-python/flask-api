@@ -3,6 +3,7 @@ import sys
 from datetime import timedelta
 from flask import Flask, jsonify
 from flask_restful import Api
+from resources.test import Test
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 from resources.user import User, UserList, UserLogin, TokenRefresh
@@ -66,7 +67,6 @@ def create_app():
 
     # jtw extended token settings
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = API_SRV.config['security']['token_expiration']
-    logger.debug(f"set token expiration to {API_SRV.config['security']['token_expiration']} seconds")
     jwt = JWTManager(app)
 
     @jwt.user_claims_loader
@@ -93,6 +93,7 @@ def create_app():
 
 def add_resources(api: Api):
     # Add resources and binding with the HTTP URL
+    api.add_resource(Test, '/test')
     api.add_resource(Item, '/items/<string:name>')
     api.add_resource(ItemList, '/items')
     api.add_resource(Store, '/stores/<int:_id>')
@@ -114,19 +115,13 @@ def main():
         db.init_app(app)
         # run the test server, Debug=True helps to debug in case of any error
         api_env = os.environ[API_SRV.config['server']['api_env']]
+        logger.debug(f"set token expiration to {API_SRV.config['security']['token_expiration']} seconds")
         if api_env == 'test':
             logger.info(f"Application is starting in TEST environment (version: {API_SRV.config['server']['version']})")
             app.run(host=API_SRV.config['server']['address'], port=API_SRV.config['server']['port'],
                     debug=True if API_SRV.config['server']['debug'] else False)
         else:
             logger.info(f"Application is starting in PRODUCTION env (version: {API_SRV.config['server']['version']})")
-            # gunicorn_logger = logging.getLogger('gunicorn.error')
-            # gunicorn_logger.setLevel(logger.level)
-            # print(gunicorn_logger)
-            # gunicorn_logger.handlers.clear()
-            # gunicorn_logger.addHandler(logger.handlers[0])
-            # print(gunicorn_logger.handlers)
-            # logging.getLogger('gunicorn.error').handlers = logging.getLogger(API_SRV.config['log']['default_logger']).handlers
     except KeyError as e:
         logger.error(f"Houston, we have a problem finding the env variable: {str(e)}")
         sys.exit(1)
