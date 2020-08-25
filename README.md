@@ -11,7 +11,6 @@ Documentation can be found here:
 
 This a list of open points to deal with:
 
-- import flask-jwt-extended package to manage creation and access to the JWT [token](https://flask-jwt-extended.readthedocs.io/en/stable/)
 - go in deep into SQLALchemy as a possible ORM to use
 
 ## Installation
@@ -51,17 +50,6 @@ pip3 install -r requirements.txt
 python3 code/tmpdb.py
 ```
 
-- in case of using Postgres you need to have a valid Postgres installion to refer to and you need to create the following table:
-
-```shell
-CREATE TABLE items
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100),
-  price REAL);
-
-
-```
-
 IMPORTANT: using Postgres you need to have installed the library:
 
 ```shell
@@ -74,8 +62,10 @@ There are three main configuration files located in config folder:
 
 - **api-server.toml**: it is the main configuration file for the API Application. All the variables are commented out.
 
-- **log.conf**: configuration file for the logging of the entire application.
-
+- **logging.conf**: configuration file for the logging of the entire application.
+  
+- **uwsgi.ini**: configuration file for the uwsgi server.
+  
 ## Launch the application
 
 The application can be executed in two ways:
