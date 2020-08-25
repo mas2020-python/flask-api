@@ -99,6 +99,23 @@ Examples for test:
 2020-07-28 12:53:03,230 [WARNING] werkzeug -  * Debugger is active!
 ```
 
+### Run in a docker container
+
+To build the container to the last version:
+```shell
+docker build -t flask-api:dev -f deployments/Dockerfile_dev .
+```
+
+To execute the container type in foreground type:
+```
+docker run -ti --name flask-api -p 8080:8080 --rm -v $PWD/log:/usr/src/flask-api/log flask-api:dev
+```
+or, to execute in background type:
+```
+docker run -d --name flask-api -p 8080:8080 --rm -v l-v $PWD/log:/usr/src/flask-api/log flask-api:dev
+```
+
+
 ### Run in production (local) environment
 
 To run in a local `PRODUCTION` environment (always for test purpose) use:
