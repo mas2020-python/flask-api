@@ -70,8 +70,8 @@ There are three main configuration files located in config folder:
 
 The application can be executed in two ways:
 
-- in test mode with Flask integrated server and debug
-- in production mode with [uwsgi](https://uwsgi-docs.readthedocs.io/en/latest/index.html)
+- in test environment with Flask integrated server and debug
+- in production environment with [uwsgi](https://uwsgi-docs.readthedocs.io/en/latest/index.html)
 
 To switch between these two envs set accordingly the ENV variable APISRV_ENV with:
 

@@ -1,7 +1,7 @@
 flask-env
 *.log
 .idea
-code/data.db
+data.db
 # temporary exclusion
 docker
 

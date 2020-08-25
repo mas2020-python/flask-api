@@ -5,6 +5,7 @@ from utils.config import API_SRV
 import logging
 import traceback
 
+
 class Store(Resource):
     def __init__(self):
         self.logger = logging.getLogger(API_SRV.config['log']['default_logger'])
@@ -35,6 +36,7 @@ class StoreList(Resource):
     def get(self):
         return {'stores': [store.json() for store in StoreModel.query.all()]}
 
+    @property
     def post(self):
         try:
             data = request.json

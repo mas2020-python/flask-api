@@ -9,15 +9,8 @@ if __name__ == "__main__":
     connection = sqlite3.connect('data.db')
     cursor = connection.cursor()
 
-    # create the users' table
-    try:
-        cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username text, password text)")
-        cursor.execute("CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY, name text, price real)")
-    except sqlite3.OperationalError:
-        pass
-
     # create a tuple for the user
-    user = (1, "ag", "test")
+    user = (11, "ag", "test")
     # insert row (to add more rows use executemany
     cursor.execute("INSERT INTO users VALUES (?,?,?)", user)
     # commit the changes
