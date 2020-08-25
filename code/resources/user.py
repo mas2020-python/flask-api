@@ -99,6 +99,10 @@ class UserLogin(Resource):
         # find user and check password
         user: UserModel = UserModel.find_by_username(data['username'])
         if user and safe_str_cmp(user.password, data['password']):
+            """ 
+            IMPORTANT: in this code we create the tokens, at this time we can add some specific information
+            in the user_claim part of the JTW token using create_access_token function
+            """
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {
