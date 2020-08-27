@@ -65,7 +65,12 @@ There are three main configuration files located in config folder:
 - **logging.conf**: configuration file for the logging of the entire application.
   
 - **uwsgi.ini**: configuration file for the uwsgi server.
-  
+
+## ENV variables
+To execute the API server config accordingly these variables:
+- APISRV_ENV: explanation [here](launch-the-application)
+- DB_CONNECTION: the connection string for SQL Alchemy, e.g. "postgresql+psycopg2://postgres:mysecretpassword@db/postgres"
+
 ## Launch the application
 
 The application can be executed in two ways:
@@ -112,9 +117,40 @@ docker run -ti --name flask-api -p 8080:8080 --rm -v $PWD/log:/usr/src/flask-api
 ```
 or, to execute in background type:
 ```
-docker run -d --name flask-api -p 8080:8080 --rm -v l-v $PWD/log:/usr/src/flask-api/log flask-api:dev
+docker run -d --name flask-api -p 8080:8080 --rm -v $PWD/log:/usr/src/flask-api/log flask-api:dev
 ```
 
+to start the solution with the `docker compose` type:
+```
+docker-compose --project-directory . -f $PWD/deploy/docker-compose.yaml build
+docker-compose --project-directory . -f $PWD/deploy/docker-compose.yaml up
+```
+
+to start only a single service with the `docker compose` type:
+```
+docker-compose --project-directory . -f $PWD/deploy/docker-compose.yaml up <service-name>
+```
+
+### Test with Postgres using a Docker container
+
+To test with Postgresql in a Docker container, create first a folder on the host to save the cluster data, for instance suppose you have set ~/postgresql/data, type:
+```shell
+docker run -d \
+--name some-postgres \
+-e POSTGRES_PASSWORD=mysecretpassword \
+-e PGDATA=/var/lib/postgresql/data/pgdata \
+-v ~/postgresql/data:/var/lib/postgresql/data \
+-p 5432:5432 \
+postgres
+```
+to connect through the console type:
+```shell
+docker exec -ti some-postgres psql -h localhost -U postgres
+```
+as connection string for SQL Alchemy use:
+```
+db_connection="postgresql+psycopg2://postgres:mysecretpassword@localhost/postgres"
+```
 
 ### Run in production (local) environment
 
