@@ -8,7 +8,8 @@ api_env = "APISRV_ENV"
 # true/false to get the debug Flask directive (only for test)
 debug = true
 # connection with the db (e.g. sqlite:///data.db, postgresql+psycopg2://ag:test@192.168.1.84/test'
-db_connection="sqlite:///data.db"
+# db_connection property move out into the env variables
+#db_connection="postgresql+psycopg2://postgres:mysecretpassword@localhost/postgres"
 
 [log]
 # configuration file to use for logging

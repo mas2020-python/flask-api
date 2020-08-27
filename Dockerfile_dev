@@ -3,17 +3,17 @@ FROM python:3.7-alpine
 RUN mkdir /usr/src/flask-api
 WORKDIR /usr/src/flask-api
 COPY requirements.txt .
-RUN mkdir log
-ENV APISRV_ENV=test
+#RUN mkdir log
+#ENV APISRV_ENV=test
 
 RUN apk update && apk upgrade
-RUN apk add python3-dev build-base linux-headers pcre-dev
+RUN apk add python3-dev build-base linux-headers pcre-dev postgresql-dev
 # Install requirements
 RUN python3 -m pip install --user --no-cache-dir -r requirements.txt
 EXPOSE 8080
 
 # Copy project
-COPY code/ ./code
+#COPY code/ ./code
 
 # Run container
 WORKDIR /usr/src/flask-api/code

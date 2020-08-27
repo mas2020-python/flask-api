@@ -53,7 +53,7 @@ def create_app():
     app.secret_key = "secret-key"  # or config as app.config['JWT_SECRET_KEY']
     # in order to use only the SQLAlchemy modification tracker and not the FlaskSQLAlchemy one
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = API_SRV.config['server']['db_connection']
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DB_CONNECTION']
     app.config['PROPAGATE_EXCEPTIONS'] = True
     api = Api(app)
 
