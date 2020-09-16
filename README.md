@@ -20,40 +20,21 @@ After you clone the repo you need:
 - install python virtual env
 
 ```shell
-python3 -m venv flask-env
-source flask-env/bin/activate
+python3 -m venv venv
+source venv/bin/activate
 pip3 install --upgrade pip
 ```
 
-- (first way) install all the modules
+- install all the modules
 
 ```shell
-pip3 install flask
-pip3 install Flask-RESTful
-pip3 install toml
-pip3 install Flask-JWT-Extended
-pip3 install Flask-SQLAlchemy
-pip3 install uswgi
-# take a look to the installed libraries
-pip3 freeze
+pip3 install -r deploy/requirements.txt
 ```
 
-- (second way) install all the modules
+- in case of testing with sqlite3 to create DB type:
 
 ```shell
-pip3 install -r requirements.txt
-```
-
-- in case of testing with sqlite3 to install DB type:
-
-```shell
-python3 code/tmpdb.py
-```
-
-IMPORTANT: using Postgres you need to have installed the library:
-
-```shell
-pip install psycopg2
+python3 src/create_sqlite_test.py
 ```
 
 ## Configuration files
@@ -61,38 +42,29 @@ pip install psycopg2
 There are three main configuration files located in config folder:
 
 - **api-server.toml**: it is the main configuration file for the API Application. All the variables are commented out.
-
-- **logging.conf**: configuration file for the logging of the entire application.
   
 - **uwsgi.ini**: configuration file for the uwsgi server.
 
 ## ENV variables
 To execute the API server config accordingly these variables:
-- APISRV_ENV: explanation [here](launch-the-application)
 - DB_CONNECTION: the connection string for SQL Alchemy, e.g. "postgresql+psycopg2://postgres:mysecretpassword@db/postgres"
 
-## Launch the application
+## Run the application
 
 The application can be executed in two ways:
 
-- in test environment with Flask integrated server and debug
-- in production environment with [uwsgi](https://uwsgi-docs.readthedocs.io/en/latest/index.html)
+- in `test` environment with Flask integrated server and debug
+- in `production` environment with [uwsgi](https://uwsgi-docs.readthedocs.io/en/latest/index.html)
 
-To switch between these two envs set accordingly the ENV variable APISRV_ENV with:
-
-- `test`: the application starts with included server in local. This modality can be used in local environment or inside an IDE as PyCharm or VS Code.
-- `prod`: set this value the application can start only with a WSGI server.
-
-**IMPORTANT**: if APISRV_ENV is not set an error will be occurred.
+You can find major information in the following chapters.
 
 ### Run in test environment
 
-Examples for test:
+Examples for test using sqlite:
 
 ```shell
-╰─$ export APISRV_ENV=test
-╰─$ cd code
-╰─$ python3 app.py
+export DB_CONNECTION=sqlite:///data.db
+python3 src/app.py
  * Serving Flask app "app" (lazy loading)
  * Environment: production
    WARNING: This is a development server. Do not use it in a production deployment.
@@ -108,31 +80,50 @@ Examples for test:
 
 To build the container to the last version:
 ```shell
-docker build -t flask-api:dev -f deployments/Dockerfile_dev .
+cd <project-folder>/flask_api
+docker build -t flask-api:dev -f deploy/Dockerfile.dev .
 ```
 
-To execute the container type in foreground type:
+To `run` the container in foreground type (using sqlite for test):
+
+```shell
+docker run -ti --rm --name flask-api \
+-p 8080:8080 \
+-v $PWD:/usr/src/flask-api \
+-e DB_CONNECTION=sqlite:///data.db \
+flask-api:dev
 ```
-docker run -ti --name flask-api -p 8080:8080 --rm -v $PWD/log:/usr/src/flask-api/log flask-api:dev
-```
+
 or, to execute in background type:
-```
-docker run -d --name flask-api -p 8080:8080 --rm -v $PWD/log:/usr/src/flask-api/log flask-api:dev
+
+```shell
+docker run -ti --rm -d --name flask-api \
+-p 8080:8080 \
+-v $PWD:/usr/src/flask-api \
+-e DB_CONNECTION=sqlite:///data.db \
+flask-api:dev
 ```
 
-to start the solution with the `docker compose` type:
+to start the entire solution (with postgresql) with the `docker compose` type:
 ```
-docker-compose --project-directory . -f $PWD/deploy/docker-compose.yaml build
-docker-compose --project-directory . -f $PWD/deploy/docker-compose.yaml up
+docker-compose -f $PWD/deploy/docker-compose.yaml up
 ```
 
 to start only a single service with the `docker compose` type:
 ```
-docker-compose --project-directory . -f $PWD/deploy/docker-compose.yaml up <service-name>
+docker-compose -f $PWD/deploy/docker-compose.yaml up <service-name>
+```
+
+e.g. to start only using sqlite3 (comment sections regarding postgresql):
+```
+docker-compose -f $PWD/deploy/docker-compose.yaml up flask-api
 ```
 
 ### Test with Postgres using a Docker container
 
+This use case refers to:
+- use Postgres in a docker container
+- use the application outside a container
 To test with Postgresql in a Docker container, create first a folder on the host to save the cluster data, for instance suppose you have set ~/postgresql/data, type:
 ```shell
 docker run -d \
@@ -154,11 +145,11 @@ db_connection="postgresql+psycopg2://postgres:mysecretpassword@localhost/postgre
 
 ### Run in production (local) environment
 
-To run in a local `PRODUCTION` environment (always for test purpose) use:
+####`------- TESTING FROM HERE -----`
+To run in a local `PRODUCTION` environment (always for testing) use:
 
 ```shell
 <path-to-uwsgi-bin>/uwsgi --http-socket :8080 --module app:app --uid <user> --gid <user> --master --process 2 --threads 2 --env=APISRV_ENV=prod
-
 ```
 
 for example:
@@ -170,10 +161,8 @@ flask-env/bin/uwsgi --http-socket :8080 --module app:app --uid andrea --gid andr
 or, if you use the uwsgi.ini file you can use:
 
 ```shell
-flask-env/bin/uwsgi \
---uid andrea --gid andrea \
---master --ini code/config/uwsgi.ini \
---env=APISRV_ENV=prod
+venv/bin/uwsgi \
+--master --ini src/config/uwsgi.ini
 ```
 
 to run with **emperor**:

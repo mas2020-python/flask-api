@@ -14,6 +14,7 @@ debug = true
 [log]
 # configuration file to use for logging
 conf_file = "config/logging.conf"
+level = "DEBUG"
 # default logger
 default_logger = "sampleLogger"
 
