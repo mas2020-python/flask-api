@@ -29,6 +29,7 @@ class StoreModel(db.Model):
     items = db.relationship('ItemModel', lazy='dynamic', backref=db.backref('store', lazy='joined'))
     at this point in the ItemModel is possible to reference the self.store property (without ever having created it)
     """
+    # one to many relationship from store -> items
     items = db.relationship('ItemModel', lazy='dynamic')
     # -- end SQLAlchemy info
 

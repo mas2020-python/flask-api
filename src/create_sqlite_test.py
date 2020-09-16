@@ -37,7 +37,8 @@ def create_db(db: str):
   users = [(1, "ag", "test")]
 
   cursor.execute("DELETE FROM users")
-  # cursor.execute("DELETE FROM access_tokens")
+  cursor.execute("DELETE FROM stores")
+  cursor.execute("DELETE FROM items")
 
   # insert row (to add more rows use executemany)
   cursor.executemany("INSERT INTO users (id,username,password) VALUES (?,?,?)", users)
@@ -48,6 +49,13 @@ def create_db(db: str):
            (3, "store-3"),
            ]
   cursor.executemany("INSERT INTO stores (id,name) VALUES (?,?)", stores)
+
+  # items
+  items = [(1, "item-1", 10.0, 1),
+           (2, "item-2", 12.03, 2),
+           (3, "item-3", 99, 2),
+           ]
+  cursor.executemany("INSERT INTO items (id,name,price,store_id) VALUES (?,?,?,?)", items)
 
   connection.commit()
   connection.close()
