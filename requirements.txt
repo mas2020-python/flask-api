@@ -1,6 +1,0 @@
-Flask-JWT-Extended
-Flask-RESTful
-Flask-SQLAlchemy
-toml
-psycopg2
-uwsgi==2.0.19.1
