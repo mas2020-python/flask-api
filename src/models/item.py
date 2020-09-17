@@ -14,6 +14,7 @@ class ItemModel(db.Model):
     # connection with the store table: the db.ForeignKey connects the stores id field with the store_id field. It is
     # a classic way as a Foreign key create a link between two tables
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
+
     # -- end SQLAlchemy info
 
     def __init__(self, name, price, store_id):
@@ -29,7 +30,7 @@ class ItemModel(db.Model):
             'name': self.name,
             'price': self.price,
             'store_id': self.store_id,
-            #'store_name': self.store.name
+            # 'store_name': self.store.name
         }
 
     @classmethod

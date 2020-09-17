@@ -31,6 +31,7 @@ class StoreModel(db.Model):
     """
     # one to many relationship from store -> items
     items = db.relationship('ItemModel', lazy='dynamic')
+
     # -- end SQLAlchemy info
 
     def __init__(self, name):
@@ -52,9 +53,9 @@ class StoreModel(db.Model):
 
     @classmethod
     # Search an item by name
-    def find_by_id(cls, id):
+    def find_by_id(cls, _id):
         # return the first row matching with the filter using FlaskSQLAlchemy
-        return cls.query.filter_by(id=id).first()
+        return cls.query.filter_by(id=_id).first()
 
     """
     Save and update at the same time

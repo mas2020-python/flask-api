@@ -23,4 +23,3 @@ class Test(Resource):
 
     def delete(self):
         pass
-
