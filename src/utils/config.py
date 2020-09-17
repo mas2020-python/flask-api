@@ -1,5 +1,6 @@
 import logging
 
+
 class APIServer:
     def __init__(self):
         self.config: dict = {}
@@ -10,6 +11,7 @@ class APIServer:
     #     self.logger.error(f"Houston, we have a problem: {e.__str__()}")
     #     resp.body = json.dumps(e.__str__(), indent=4, sort_keys=True)
     #     resp.status = status
+
 
 # Global constants
 API_SRV = APIServer()
