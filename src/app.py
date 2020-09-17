@@ -1,15 +1,15 @@
 import os
 import sys
-# print(sys.path)
-from flask import Flask, jsonify
-from flask_restful import Api
-from flask_jwt_extended import JWTManager
-from internal.db import db
-from utils.config import API_SRV
-from internal.resources import add_resources
 import toml
 import logging
 import logging.config
+from flask import Flask, jsonify
+from flask_restful import Api
+from flask_jwt_extended import JWTManager
+
+from internal.db import db, sql_debug
+from utils.config import API_SRV
+from internal.resources import add_resources
 
 """
 Using flask_restful jsonify for object that are not dictionary is
@@ -70,6 +70,9 @@ def create_app():
     app.config['PROPAGATE_EXCEPTIONS'] = True
     app.config['DEBUG'] = API_SRV.config['server']['debug']
     api = Api(app)
+
+    if API_SRV.config['server']['sql_debug']:
+        app.after_request(sql_debug)
 
     # using a decorator of Flask to execute the following method before the first request comes to Flask
     @app.before_first_request
