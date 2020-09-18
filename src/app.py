@@ -107,26 +107,27 @@ def create_app():
 
 
 def start():
-    try:
-        # read config and load logger
-        read_api_config()
-        set_logger()
-        create_app()
-        add_resources(api)
-        # connect the SQLAlchemy object to the app
-        db.init_app(app)
-    except KeyError as e:
-        logger.error(f"Houston, we have a problem finding the env variable: {str(e)}")
-        sys.exit(1)
-    except Exception as e:
-        logger.error(f"Houston, we have a problem: {str(e)}")
-        sys.exit(1)
+    # read config and load logger
+    read_api_config()
+    set_logger()
+    create_app()
+    add_resources(api)
+    # connect the SQLAlchemy object to the app
+    db.init_app(app)
 
 
 def main():
+    """
+    Main function to start the application
+    """
     try:
         start()
-        app.run(host=API_SRV.config['server']['address'], port=API_SRV.config['server']['port'])
+        if __name__ == '__main__':
+            logger.info(f"Application starting in TEST environment (version: {API_SRV.config['server']['version']})")
+            # run with the Flask web server for testing
+            app.run(host=API_SRV.config['server']['address'], port=API_SRV.config['server']['port'])
+        else:
+            logger.info(f"Application starting in PRODUCTION env (version: {API_SRV.config['server']['version']})")
     except KeyError as e:
         logger.error(f"Houston, we have a problem finding the env variable: {str(e)}")
         sys.exit(1)
@@ -136,9 +137,4 @@ def main():
 
 
 # start point for the Application
-if __name__ == '__main__':
-    main()
-    logger.info(f"Application started in TEST environment (version: {API_SRV.config['server']['version']})")
-else:
-    start()
-    logger.info(f"Application started in PRODUCTION env (version: {API_SRV.config['server']['version']})")
+main()
