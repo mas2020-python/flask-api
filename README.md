@@ -144,7 +144,7 @@ db_connection="postgresql+psycopg2://postgres:mysecretpassword@localhost/postgre
 ```
 
 ### Run in production (local) environment
-
+Before doing the next steps remember to install uwsgi with pip3. The version is listed into the depoly/requirementes.txt file.
 ####`------- TESTING FROM HERE -----`
 To run in a local `PRODUCTION` environment (always for testing) use:
 
@@ -155,7 +155,7 @@ To run in a local `PRODUCTION` environment (always for testing) use:
 for example:
 
 ```shell
-flask-env/bin/uwsgi --http-socket :8080 --module app:app --uid andrea --gid andrea --master --ini code/config/uwsgi.ini --env=APISRV_ENV=prod
+venv/bin/uwsgi --http-socket :8080 --module app:app --uid andrea --gid andrea --master --ini code/config/uwsgi.ini --env=APISRV_ENV=prod
 ```
 
 or, if you use the uwsgi.ini file you can use:
