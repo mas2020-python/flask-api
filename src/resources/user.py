@@ -111,6 +111,7 @@ class UserLogin(Resource):
                    }, 200
         return {'message': 'Invalid credentials'}, 401
 
+
 class TokenRefresh(Resource):
     @jwt_refresh_token_required
     def post(self):

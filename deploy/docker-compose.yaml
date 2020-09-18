@@ -2,20 +2,17 @@ version: '3.1'
 
 services:
   flask-api:
-    build:
-      context: .
-      dockerfile: Dockerfile_dev
     image: flask-api:dev
     ports:
     - "8080:8080"
     environment:
-    - APISRV_ENV=test
-    - DB_CONNECTION=postgresql+psycopg2://postgres:mysecretpassword@db/postgres
+    # you can choose which DB, if you uncomment postgresql, remember to uncomment depends_on section as well
+#    - DB_CONNECTION=postgresql+psycopg2://postgres:mysecretpassword@db/postgres
+    - DB_CONNECTION=sqlite:///data.db
     volumes:
-    - $PWD/log:/usr/src/flask-api/log
-    - $PWD/code:/usr/src/flask-api/code
-    depends_on: # lega lo start di un container al running (non ready) di un altro container
-      - db
+    - $PWD:/usr/src/flask-api
+#    depends_on: # to create a dependency between two containers
+#      - db
   db:
     image: postgres:12.4-alpine
     ports:

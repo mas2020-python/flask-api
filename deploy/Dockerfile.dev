@@ -1,0 +1,22 @@
+FROM python:3.7-slim
+
+RUN mkdir /usr/src/flask-api
+WORKDIR /usr/src/flask-api
+COPY requirements_dev.txt .
+
+# Install requirements
+RUN python3 -m pip install --upgrade pip \
+    && python3 -m pip install --user --no-cache-dir -r requirements_dev.txt
+
+EXPOSE 8080
+
+# Copy project
+RUN mkdir code tests
+COPY src/ src/
+#COPY tests/ tests/
+
+# create sqlite3 db for testing
+RUN python3 src/create_sqlite_test.py
+
+# Run container
+CMD ["python3", "src/app.py"]

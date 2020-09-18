@@ -1,61 +1,78 @@
 import os
 import sys
-from flask import Flask, jsonify
-from flask_restful import Api
-from resources.test import Test
-from resources.item import Item, ItemList
-from resources.store import Store, StoreList
-from resources.user import User, UserList, UserLogin, TokenRefresh
-from flask_jwt_extended import JWTManager
-from internal.db import db
-from utils.config import API_SRV
 import toml
 import logging
 import logging.config
+from flask import Flask, jsonify
+from flask_restful import Api
+from flask_jwt_extended import JWTManager
+
+from internal.db import db, sql_debug
+from utils.config import API_SRV
+from internal.resources import add_resources
 
 """
-Using flask_restful jsonify for object that are not dictionary is not needed cause flask restful
-do it for us.
+Using flask_restful jsonify for object that are not dictionary is
+not needed cause flask restful do it for us.
 """
 logger: logging.Logger
 # Flask api global variable
 api: Api
-app: Flask
+app = Flask('flask-api')
 
 
 def read_api_config():
     try:
-        API_SRV.config = toml.load('config/api-server.toml')
+        api_server_toml = os.path.join(os.path.dirname(__file__), 'config', 'api-server.toml')
+        API_SRV.config = toml.load(api_server_toml)
     except Exception as e:
-        print("Houston, we have a problem: ", e.__str__())
+        print("Houston, we have a problem in read_api_config: ", e.__str__())
         sys.exit(1)
 
 
-# Set the logger
 def set_logger():
+    """
+    Set the logger to the folder <project>/log.
+    """
     global logger
     try:
-        # Does log file exist?
-        if not os.path.isfile(API_SRV.config['log']['conf_file']):
-            raise Exception("log config file ({}) not found!".format(API_SRV.config['log']['conf_file']))
-        logging.config.fileConfig(fname=API_SRV.config['log']['conf_file'], disable_existing_loggers=True)
+        # if the folder doesn't exist will be created
+        log_folder = os.path.join(os.path.dirname(__file__), '..', 'log')
+        if not os.path.isdir(log_folder):
+            os.mkdir(log_folder)
         # Get the logger specified in the file
         logger = logging.getLogger(API_SRV.config['log']['default_logger'])
+        logger.setLevel(API_SRV.config['log']['level'])
+        # create file handler and set level to debug
+        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__), '..', 'log', 'app.log'))
+        fh.setLevel(API_SRV.config['log']['level'])
+        # create formatter and add it to the handlers
+        formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(name)s - %(message)s')
+        fh.setFormatter(formatter)
+
+        # add the handlers to the logger
+        logger.addHandler(fh)
+    except KeyError as e:
+        logger.error(f"Houston, we have a problem finding the env variable in set_logger: {str(e)}")
+        sys.exit(1)
     except Exception as e:
-        print("Houston, we have a problem: ", e.__str__())
+        print("Houston, we have a problem in set_logger: ", e)
         sys.exit(1)
 
 
 def create_app():
     global api, app
     # creating main app
-    app = Flask(__name__)
     app.secret_key = "secret-key"  # or config as app.config['JWT_SECRET_KEY']
     # in order to use only the SQLAlchemy modification tracker and not the FlaskSQLAlchemy one
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DB_CONNECTION']
     app.config['PROPAGATE_EXCEPTIONS'] = True
+    app.config['DEBUG'] = API_SRV.config['server']['debug']
     api = Api(app)
+
+    if API_SRV.config['server']['sql_debug']:
+        app.after_request(sql_debug)
 
     # using a decorator of Flask to execute the following method before the first request comes to Flask
     @app.before_first_request
@@ -89,37 +106,28 @@ def create_app():
         }), 401
 
 
-def add_resources():
-    # Add resources and binding with the HTTP URL
-    api.add_resource(Test, '/test')
-    api.add_resource(Item, '/items/<string:name>')
-    api.add_resource(ItemList, '/items')
-    api.add_resource(Store, '/stores/<int:_id>')
-    api.add_resource(StoreList, '/stores')
-    api.add_resource(User, '/users/<int:user_id>')
-    api.add_resource(UserList, '/users')
-    api.add_resource(UserLogin, '/login')
-    api.add_resource(TokenRefresh, '/refresh')
+def start():
+    # read config and load logger
+    read_api_config()
+    set_logger()
+    create_app()
+    add_resources(api)
+    # connect the SQLAlchemy object to the app
+    db.init_app(app)
 
 
 def main():
+    """
+    Main function to start the application
+    """
     try:
-        # read config and load logger
-        read_api_config()
-        set_logger()
-        create_app()
-        add_resources()
-        # connect the SQLAlchemy object to the app
-        db.init_app(app)
-        # run the test server, Debug=True helps to debug in case of any error
-        api_env = os.environ[API_SRV.config['server']['api_env']]
-        logger.debug(f"set token expiration to {API_SRV.config['security']['token_expiration']} seconds")
-        if api_env == 'test':
-            logger.info(f"Application is starting in TEST environment (version: {API_SRV.config['server']['version']})")
-            app.run(host=API_SRV.config['server']['address'], port=API_SRV.config['server']['port'],
-                    debug=True if API_SRV.config['server']['debug'] else False)
+        start()
+        if __name__ == '__main__':
+            logger.info(f"Application starting in TEST environment (version: {API_SRV.config['server']['version']})")
+            # run with the Flask web server for testing
+            app.run(host=API_SRV.config['server']['address'], port=API_SRV.config['server']['port'])
         else:
-            logger.info(f"Application is starting in PRODUCTION env (version: {API_SRV.config['server']['version']})")
+            logger.info(f"Application starting in PRODUCTION env (version: {API_SRV.config['server']['version']})")
     except KeyError as e:
         logger.error(f"Houston, we have a problem finding the env variable: {str(e)}")
         sys.exit(1)
